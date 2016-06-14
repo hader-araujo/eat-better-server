@@ -46,7 +46,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>eat-better-server</finalName>
+		<finalName>eatbetter</finalName>
 
 		<plugins>
 			<plugin>
