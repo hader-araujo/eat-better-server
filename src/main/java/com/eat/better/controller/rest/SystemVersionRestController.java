@@ -11,12 +11,13 @@ import com.eat.better.model.entity.SystemVersionEntity;
 import com.eat.better.model.repository.SystemVersionRepository;
 
 @RestController
+@RequestMapping(value = "/systemversion")
 public class SystemVersionRestController {
 
 	@Autowired
 	private SystemVersionRepository repository;
 
-	@RequestMapping(value = "/systemversion", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<SystemVersionEntity> getSystemVersion() {
 		SystemVersionEntity entity = repository.getSystemVersion();
 		if (entity == null) {
