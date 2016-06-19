@@ -2,10 +2,19 @@ package com.eat.better.model.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+
+@Entity
 public class SystemVersionEntity implements Serializable {
 
 	private static final long serialVersionUID = -5998328558760790046L;
 
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private String version;
 
