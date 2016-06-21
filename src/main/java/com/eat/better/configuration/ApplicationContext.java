@@ -1,5 +1,9 @@
 package com.eat.better.configuration;
 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -8,6 +12,9 @@ import com.eat.better.configuration.model.JpaConfiguration;
 
 public class ApplicationContext extends AbstractAnnotationConfigDispatcherServletInitializer
 		implements WebApplicationInitializer {
+	
+	private static final Logger log = LogManager.getLogger(ApplicationContext.class.getName());
+    
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 
@@ -22,7 +29,8 @@ public class ApplicationContext extends AbstractAnnotationConfigDispatcherServle
 
 	@Override
 	protected String[] getServletMappings() {
-		System.out.println("\n\n\n\n\n\n now deploying");
-		return new String[] { "/" }; // TODO to remove it
+	        
+		log.debug("now deploying");
+		return new String[] { "/" };
 	}
 }
