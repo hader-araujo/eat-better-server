@@ -34,7 +34,7 @@ public class SystemVersionRestController {
 			return new ResponseEntity<SystemVersionEntity>(HttpStatus.NOT_FOUND);
 		}
 		
-		log.info("Returning the entity: " + entity);
+		log.info("getSystemVersion::Returning the entity: " + entity);
 		
 		return new ResponseEntity<SystemVersionEntity>(entity, HttpStatus.OK);
 	}
