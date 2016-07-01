@@ -1,4 +1,4 @@
-package com.eat.better.configuration.model;
+package com.eat.better.configuration;
 
 import java.util.Properties;
 

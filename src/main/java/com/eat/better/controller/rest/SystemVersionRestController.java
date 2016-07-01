@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eat.better.model.entity.SystemVersionEntity;
-import com.eat.better.model.repository.SystemVersionJpaRespository;
+import com.eat.better.service.SystemVersionService;
 
 @RestController
 @RequestMapping(value = "/systemversion")
@@ -19,16 +19,16 @@ public class SystemVersionRestController {
 	private static final Logger log = LogManager.getLogger(SystemVersionRestController.class);
 	
 	@Autowired
-	private SystemVersionJpaRespository repository;
+	private SystemVersionService service;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<SystemVersionEntity> getSystemVersion() {
 		SystemVersionEntity entity = new SystemVersionEntity();
 		entity.setVersion("Version 1.0");
 
-		repository.saveAndFlush(entity);
+		service.saveAndFlush(entity);
 		
-		entity = repository.findOne(1L);
+		entity = service.findOne(1L);
 		
 		if (entity == null) {
 			return new ResponseEntity<SystemVersionEntity>(HttpStatus.NOT_FOUND);
