@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
@@ -28,23 +29,36 @@ public class FoodRestController {
 
 	private static final String URI_USDA_FOOD_LIST = "https://api.nal.usda.gov/ndb/list/?format=json&lt=f&sort=n&offset={offset}&max={max}&api_key=iDRxNvxZLHC6oSPeu2nr4C6T3RAe4rzikMjakXnC";
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<String> getFood(@RequestParam("page") Long page, @RequestParam("size") Long size) {
+	private RestTemplate restTemplate;
+	private HttpEntity<?> httpEntity;
 
-		final Long offset = (page - 1) * size;
-		
-		log.debug(String.format("getFood::page %d, size %d, offset %d", page, size, offset));
-
+	public FoodRestController() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
-		RestTemplate restTemplate = new RestTemplate();
-		HttpEntity<?> httpEntity = new HttpEntity<>(headers);
+		restTemplate = new RestTemplate();
+		httpEntity = new HttpEntity<>(headers);
+	}
 
-		ResponseEntity<String> exchange = restTemplate.exchange(URI_USDA_FOOD_LIST, HttpMethod.GET, httpEntity,
-				String.class, offset, size);
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<String> getFood(@RequestParam("page") Long page, @RequestParam("max") Long max) {
 
-		String body = exchange.getBody();
-		return new ResponseEntity<String>(body, HttpStatus.OK);
+		final Long offset = (page - 1) * max;
+		log.debug(String.format("getFood::page %d - offset %d, max %d", page, offset, max));
+
+		ResponseEntity<String> exchange;
+		try {
+
+			exchange = restTemplate.exchange(URI_USDA_FOOD_LIST, HttpMethod.GET, httpEntity, String.class, offset, max);
+
+			String body = exchange.getBody();
+
+			// log.debug(String.format("getFood::body = %s", body));
+
+			return new ResponseEntity<String>(body, HttpStatus.OK);
+		} catch (RestClientException e) { // TODO dealing with different errors status
+			log.error("getFood::Error getting the food list", e);
+			return new ResponseEntity<String>(HttpStatus.TOO_MANY_REQUESTS);
+		}
 
 	}
 
