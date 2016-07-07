@@ -5,9 +5,11 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.flywaydb.core.Flyway;
 import org.hibernate.dialect.DerbyTenSevenDialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -21,7 +23,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 public class JpaConfiguration {
+
+	@Bean(initMethod = "migrate")
+	public Flyway flyway() {
+		Flyway flyway = new Flyway();
+		flyway.setBaselineOnMigrate(true);
+		flyway.setLocations("classpath:db/migration");
+		flyway.setDataSource(dataSource());
+		return flyway;
+	}
+
 	@Bean
+	@DependsOn("flyway")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
 			JpaVendorAdapter jpaVendorAdapter) {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -77,7 +90,7 @@ public class JpaConfiguration {
 
 	Properties additionalProperties() {
 		Properties properties = new Properties();
-		properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+		properties.setProperty("hibernate.hbm2ddl.auto", "none");
 		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.DerbyDialect");
 		return properties;
 	}

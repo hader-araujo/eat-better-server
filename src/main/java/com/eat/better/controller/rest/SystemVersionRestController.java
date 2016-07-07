@@ -23,12 +23,7 @@ public class SystemVersionRestController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<SystemVersionEntity> getSystemVersion() {
-		SystemVersionEntity entity = new SystemVersionEntity();
-		entity.setVersion("Version 1.0");
-
-		service.saveAndFlush(entity);
-		
-		entity = service.findOne(1L);
+		SystemVersionEntity entity = service.findOne(1L);
 		
 		if (entity == null) {
 			return new ResponseEntity<SystemVersionEntity>(HttpStatus.NOT_FOUND);
