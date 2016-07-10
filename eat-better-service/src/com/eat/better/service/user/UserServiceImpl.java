@@ -1,5 +1,9 @@
 package com.eat.better.service.user;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +19,7 @@ import com.eat.better.service.exception.crudgeneric.CreateGenericException;
 import com.eat.better.service.exception.crudgeneric.ReadGenericException;
 
 @Service
-@Transactional (readOnly = true)
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
 	private static final Logger log = LogManager.getLogger(UserServiceImpl.class.getName());
@@ -28,7 +32,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional (readOnly = false)
+	@Transactional(readOnly = false)
 	public UserDTO saveAndFlush(UserDTO dto) throws CreateGenericException {
 		try {
 			// TODO save with id (update)
@@ -87,5 +91,23 @@ public class UserServiceImpl implements UserService {
 			log.error("saveAndFlush::Generic Error", e);
 			throw new ReadGenericException();
 		}
+	}
+
+	@Override
+	public List<UserDTO> findAll() throws ReadGenericException {
+
+		try {
+			List<User> userList = repository.findAll();
+
+			if (userList == null) {
+				return Collections.emptyList();
+			}
+
+			return userList.stream().map(f -> new UserDTO(f)).collect(Collectors.toList());
+
+		} catch (Exception e) {
+			throw new ReadGenericException();
+		}
+
 	}
 }
