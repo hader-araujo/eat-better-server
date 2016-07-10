@@ -18,29 +18,28 @@ import com.eat.better.service.user.UserService;
 import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_FindOne {
-	
+
 	UserJpaRepository repository;
 	UserService service;
-	
+
 	final Long id = 1L;
 	final String login = "myLogin";
 	final String name = "myName";
-	
+
 	@Before
 	public void setup() {
 		repository = mock(UserJpaRepository.class);
+		service = new UserServiceImpl(repository);
 	}
-	
+
 	@Test
-	public void findOne_ShouldReturnEntry() throws ReadGenericException {
+	public void findOne_GivenOneEntityShouldReturnOneDto() throws ReadGenericException {
 
 		User entity = new User();
 		entity.setId(id);
 		entity.setLogin(login);
 		entity.setName(name);
 		when(repository.findOne(id)).thenReturn(entity);
-
-		service = new UserServiceImpl(repository);
 
 		UserDTO dto = service.findOne(id);
 
@@ -50,22 +49,17 @@ public class UserServiceTest_FindOne {
 	}
 
 	@Test(expected = DTONotFoundException.class)
-	public void findOne_DontExistsShouldThrowException() throws ReadGenericException {
+	public void findOne_DontExistEntityShouldThrowException() throws ReadGenericException {
 
 		when(repository.findOne(id)).thenReturn(null);
-
-		service = new UserServiceImpl(repository);
 
 		service.findOne(id);
 	}
 
-	@Test (expected = ReadGenericException.class)
-	public void findOne_NullRespositotyShouldThrowException() throws ReadGenericException {
+	@Test(expected = ReadGenericException.class)
+	public void findOne_NullRepositotyShouldThrowException() throws ReadGenericException {
 
 		when(repository.findOne(id)).thenThrow(new RuntimeException());
-
-		service = new UserServiceImpl(repository);
-
 		service.findOne(id);
 	}
 }

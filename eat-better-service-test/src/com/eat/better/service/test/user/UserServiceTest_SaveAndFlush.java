@@ -43,7 +43,7 @@ public class UserServiceTest_SaveAndFlush {
 	}
 
 	@Test
-	public void saveAndFlush_ShouldSaveDto() throws CreateGenericException {
+	public void saveAndFlush_GivenOneEntityShouldSaveDto() throws CreateGenericException {
 		User userIn = new User();
 		userIn.setLogin(login);
 		userIn.setName(name);
