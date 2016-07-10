@@ -1,4 +1,4 @@
-package com.eat.better.service.user;
+package com.eat.better.service.test.user;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

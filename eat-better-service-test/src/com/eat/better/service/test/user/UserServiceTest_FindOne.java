@@ -1,4 +1,4 @@
-package com.eat.better.service.user;
+package com.eat.better.service.test.user;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,6 +13,9 @@ import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
 import com.eat.better.service.exception.DTONotFoundException;
 import com.eat.better.service.exception.crudgeneric.ReadGenericException;
+import com.eat.better.service.user.UserDTO;
+import com.eat.better.service.user.UserService;
+import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_FindOne {
 	
