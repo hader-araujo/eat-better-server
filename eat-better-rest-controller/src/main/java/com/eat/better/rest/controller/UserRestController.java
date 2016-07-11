@@ -32,7 +32,6 @@ public class UserRestController {
 	public @ResponseBody ResponseEntity<UserDTO> getUser() {
 		try {
 			UserDTO dto;
-			// TODO move the validation on the service to control
 			try {
 				dto = service.findOne(1L);
 			} catch (DTONotFoundException e) {

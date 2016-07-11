@@ -15,8 +15,11 @@ import com.eat.better.repository.UserJpaRepository;
 import com.eat.better.service.exception.DTONotFoundException;
 import com.eat.better.service.exception.DTONullPointerException;
 import com.eat.better.service.exception.FieldNullPointerException;
+import com.eat.better.service.exception.FieldReadOnlyException;
 import com.eat.better.service.exception.crudgeneric.CreateGenericException;
+import com.eat.better.service.exception.crudgeneric.DeleteGenericException;
 import com.eat.better.service.exception.crudgeneric.ReadGenericException;
+import com.eat.better.service.exception.crudgeneric.UpdateGenericException;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,10 +36,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public UserDTO saveAndFlush(UserDTO dto) throws CreateGenericException {
+	public void saveAndFlush(UserDTO dto) throws CreateGenericException, UpdateGenericException, FieldNullPointerException {
 		try {
-			// TODO save with id (update)
-
 			if (dto == null) {
 				log.error("saveAndFlush::dto null");
 				throw new DTONullPointerException(UserDTO.class);
@@ -52,26 +53,39 @@ public class UserServiceImpl implements UserService {
 				throw new FieldNullPointerException(UserDTO.class, UserDTO.FIELD.NAME.name());
 			}
 
+			if (dto.getId() != null) {
+				if (repository.findByIdAndLogin(dto.getId(), dto.getLogin()) == null) {
+					throw new FieldReadOnlyException(UserDTO.class, UserDTO.FIELD.LOGIN.name());
+				}
+			}
+
 			User user = new User();
+			user.setId(dto.getId());
 			user.setLogin(dto.getLogin());
 			user.setName(dto.getName());
 
-			repository.saveAndFlush(user);
-
-			return new UserDTO(user);
-
-		} catch (CreateGenericException e) {
+			user = repository.saveAndFlush(user);
+			dto.setId(user.getId());
+		} catch (CreateGenericException | UpdateGenericException | FieldNullPointerException e) {
 			throw e;
 		} catch (Exception e) {
 			log.error("saveAndFlush::Generic Error", e);
-			throw new CreateGenericException();
+			if (dto.getId() != null) {
+				throw new UpdateGenericException();
+			} else {
+				throw new CreateGenericException();
+			}
 		}
 	}
 
 	@Override
-	public UserDTO findOne(Long id) throws ReadGenericException {
+	public UserDTO findOne(Long id) throws ReadGenericException, FieldNullPointerException {
 		try {
 
+			if (id == null) {
+				throw new FieldNullPointerException(UserDTO.class, UserDTO.FIELD.ID.name());
+			}
+			
 			User entity = repository.findOne(id);
 
 			if (entity == null) {
@@ -84,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
 			return dto;
 
-		} catch (ReadGenericException e) {
+		} catch (FieldNullPointerException | DTONotFoundException e) {
 			throw e;
 		} catch (Exception e) {
 
@@ -95,8 +109,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDTO> findAll() throws ReadGenericException {
-
 		try {
+
 			List<User> userList = repository.findAll();
 
 			if (userList == null) {
@@ -107,6 +121,28 @@ public class UserServiceImpl implements UserService {
 
 		} catch (Exception e) {
 			throw new ReadGenericException();
+		}
+	}
+
+	@Override
+	public void delete(Long id) throws DeleteGenericException, DTONotFoundException, FieldNullPointerException {
+
+		try {
+
+			if (id == null) {
+				throw new FieldNullPointerException(UserDTO.class, UserDTO.FIELD.ID.name());
+			}
+
+			User dto = repository.findOne(id);
+			if (dto == null) {
+				throw new DTONotFoundException();
+			}
+			repository.delete(id);
+			
+		}catch(FieldNullPointerException | DTONotFoundException e){
+			throw e;
+		} catch (Exception e) {
+			throw new DeleteGenericException();
 		}
 
 	}

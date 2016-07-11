@@ -8,4 +8,5 @@ import com.eat.better.entity.User;
 @Repository
 public interface UserJpaRepository extends JpaRepository<User, Long> {
 
+	User findByIdAndLogin(Long id, String login);
 }
