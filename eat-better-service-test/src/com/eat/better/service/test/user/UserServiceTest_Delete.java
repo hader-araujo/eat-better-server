@@ -10,11 +10,10 @@ import org.junit.rules.ExpectedException;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
-import com.eat.better.service.exception.DTONotFoundException;
-import com.eat.better.service.exception.FieldNullPointerException;
-import com.eat.better.service.exception.crudgeneric.DeleteGenericException;
-import com.eat.better.service.exception.crudgeneric.ReadGenericException;
-import com.eat.better.service.user.UserDTO;
+import com.eat.better.service.exception.DeleteException;
+import com.eat.better.service.exception.ReadException;
+import com.eat.better.service.exception.enums.DeleteExceptionMessageEnum;
+import com.eat.better.service.exception.enums.ReadExceptionMessageEnum;
 import com.eat.better.service.user.UserService;
 import com.eat.better.service.user.UserServiceImpl;
 
@@ -27,16 +26,18 @@ public class UserServiceTest_Delete {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	@Before
 	public void setup() {
 		repository = mock(UserJpaRepository.class);
 		service = new UserServiceImpl(repository);
 	}
 
-	@Test(expected = DTONotFoundException.class)
-	public void delete_GivenOneEntityShouldDeleteIt()  throws  DeleteGenericException, FieldNullPointerException, ReadGenericException   {
-
+	@Test
+	public void delete_GivenOneEntityShouldDeleteIt() throws ReadException, DeleteException {
+		thrown.expect(ReadException.class);
+		thrown.expectMessage(ReadExceptionMessageEnum.NOT_FOUND.name());
+		
 		User entity = new User();
 		entity.setId(id);
 		when(repository.findOne(id)).thenReturn(entity).thenReturn(null);
@@ -45,25 +46,24 @@ public class UserServiceTest_Delete {
 		service.findOne(id);
 	}
 
-	@Test(expected = DTONotFoundException.class)
-	public void delete_DontExistEntityShouldThrowException()  throws  DeleteGenericException, DTONotFoundException, FieldNullPointerException   {
+	@Test
+	public void delete_DontExistEntityShouldThrowException() throws DeleteException {
+		thrown.expect(DeleteException.class);
+		thrown.expectMessage(DeleteExceptionMessageEnum.NOT_FOUND.name());
 
 		when(repository.findOne(id)).thenReturn(null);
 
 		service.delete(id);
 	}
-	
+
 	@Test
-	public void delete_NullIdShouldThrowException()  throws  DeleteGenericException, DTONotFoundException, FieldNullPointerException   {
-		thrown.expect(FieldNullPointerException.class);
-		thrown.expectMessage(String.format("%s-%s", UserDTO.class.getName(), UserDTO.FIELD.ID.name()));
+	public void delete_NullIdShouldThrowException() throws DeleteException {
+		thrown.expect(DeleteException.class);
+		thrown.expectMessage(DeleteExceptionMessageEnum.ID_NULL_EXCEPTION.name());
+
+		when(repository.findOne(null)).thenThrow(new IllegalArgumentException());
+		
 		service.delete(null);
 	}
 
-	@Test(expected = DeleteGenericException.class)
-	public void delete_NullRepositotyShouldThrowException() throws  DeleteGenericException, DTONotFoundException, FieldNullPointerException   {
-
-		when(repository.findOne(id)).thenThrow(new RuntimeException());
-		service.delete(id);
-	}
 }

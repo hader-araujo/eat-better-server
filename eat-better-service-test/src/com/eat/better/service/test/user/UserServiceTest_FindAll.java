@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
-import com.eat.better.service.exception.crudgeneric.ReadGenericException;
+import com.eat.better.service.exception.ReadException;
 import com.eat.better.service.user.UserDTO;
 import com.eat.better.service.user.UserService;
 import com.eat.better.service.user.UserServiceImpl;
@@ -48,7 +48,7 @@ public class UserServiceTest_FindAll {
 	}
 
 	@Test
-	public void findAll_GivenEntityListShouldReturnDtoList() throws ReadGenericException {
+	public void findAll_GivenEntityListShouldReturnDtoList() throws ReadException {
 
 		List<User> userList = getListOfUser();
 
@@ -67,28 +67,12 @@ public class UserServiceTest_FindAll {
 	}
 
 	@Test
-	public void findAll_NoDtoShouldReturnEmptyList() throws ReadGenericException {
+	public void findAll_NoneDtoShouldReturnEmptyList() throws ReadException {
 		when(repository.findAll()).thenReturn(Collections.emptyList());
 
 		List<UserDTO> userList = service.findAll();
 
 		assertThat("The list should be empty but not null", userList, both(empty()).and(notNullValue()));
-	}
-
-	@Test
-	public void findAll_GivenNullListEntityShouldReturnEmptyList() throws ReadGenericException {
-		when(repository.findAll()).thenReturn(null);
-
-		List<UserDTO> userList = service.findAll();
-
-		assertThat("The list should be empty but not null", userList, both(empty()).and(notNullValue()));
-	}
-
-	@Test(expected = ReadGenericException.class)
-	public void findAll_NullRepositoryShouldThrowException() throws ReadGenericException {
-
-		when(repository.findAll()).thenThrow(new RuntimeException());
-		service.findAll();
 	}
 
 	private List<User> getListOfUser() {

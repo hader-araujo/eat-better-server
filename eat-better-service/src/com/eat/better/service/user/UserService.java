@@ -2,21 +2,18 @@ package com.eat.better.service.user;
 
 import java.util.List;
 
-import com.eat.better.service.exception.DTONotFoundException;
-import com.eat.better.service.exception.FieldNullPointerException;
-import com.eat.better.service.exception.crudgeneric.CreateGenericException;
-import com.eat.better.service.exception.crudgeneric.DeleteGenericException;
-import com.eat.better.service.exception.crudgeneric.ReadGenericException;
-import com.eat.better.service.exception.crudgeneric.UpdateGenericException;
+import com.eat.better.service.exception.CreateUpdateException;
+import com.eat.better.service.exception.DeleteException;
+import com.eat.better.service.exception.ReadException;
 
 public interface UserService {
 
-	void saveAndFlush(UserDTO dto) throws CreateGenericException, UpdateGenericException, FieldNullPointerException;
+	void saveAndFlush(UserDTO dto) throws CreateUpdateException;
 
-	UserDTO findOne(Long id) throws ReadGenericException, FieldNullPointerException;
+	UserDTO findOne(Long id) throws ReadException;
 
-	List<UserDTO> findAll() throws ReadGenericException;
-	
-	void delete(Long id) throws DeleteGenericException, DTONotFoundException, FieldNullPointerException;
+	List<UserDTO> findAll() throws ReadException;
+
+	void delete(Long id) throws DeleteException;
 
 }

@@ -15,12 +15,8 @@ import org.junit.rules.ExpectedException;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
-import com.eat.better.service.exception.DTONullPointerException;
-import com.eat.better.service.exception.FieldNullPointerException;
-import com.eat.better.service.exception.FieldReadOnlyException;
-import com.eat.better.service.exception.crudgeneric.CreateGenericException;
-import com.eat.better.service.exception.crudgeneric.ReadGenericException;
-import com.eat.better.service.exception.crudgeneric.UpdateGenericException;
+import com.eat.better.service.exception.CreateUpdateException;
+import com.eat.better.service.exception.ReadException;
 import com.eat.better.service.user.UserDTO;
 import com.eat.better.service.user.UserService;
 import com.eat.better.service.user.UserServiceImpl;
@@ -45,35 +41,36 @@ public class UserServiceTest_SaveAndFlush {
 		service = new UserServiceImpl(repository);
 	}
 
+	// TODO
+	// @Test
+	// public void saveAndFlush_ChangeTheLoginShouldThrowException()
+	// throws CreateUpdateException, ReadException {
+	// thrown.expect(FieldReadOnlyException.class);
+	// thrown.expectMessage(String.format("%s-%s", UserDTO.class.getName(),
+	// UserDTO.FIELD.LOGIN));
+	//
+	// User userSearch = new User();
+	// userSearch.setId(id);
+	// userSearch.setLogin(login);
+	// userSearch.setName(name);
+	//
+	// User userUpdated = new User();
+	// userUpdated.setId(id);
+	// userUpdated.setLogin(newLogin);
+	// userUpdated.setName(name);
+	//
+	// when(repository.findOne(id)).thenReturn(userSearch);
+	// when(repository.findByIdAndLogin(id, login)).thenReturn(userSearch);
+	// when(repository.saveAndFlush(userUpdated)).thenReturn(userUpdated);
+	//
+	// UserDTO userDTO = service.findOne(id);
+	// userDTO.setLogin(newLogin);
+	// service.saveAndFlush(userDTO);
+	//
+	// }
+
 	@Test
-	public void saveAndFlush_ChangeTheLoginShouldThrowException()
-			throws CreateGenericException, ReadGenericException, UpdateGenericException, FieldNullPointerException {
-		thrown.expect(FieldReadOnlyException.class);
-		thrown.expectMessage(String.format("%s-%s", UserDTO.class.getName(), UserDTO.FIELD.LOGIN));
-
-		User userSearch = new User();
-		userSearch.setId(id);
-		userSearch.setLogin(login);
-		userSearch.setName(name);
-
-		User userUpdated = new User();
-		userUpdated.setId(id);
-		userUpdated.setLogin(newLogin);
-		userUpdated.setName(name);
-
-		when(repository.findOne(id)).thenReturn(userSearch);
-		when(repository.findByIdAndLogin(id, login)).thenReturn(userSearch);
-		when(repository.saveAndFlush(userUpdated)).thenReturn(userUpdated);
-
-		UserDTO userDTO = service.findOne(id);
-		userDTO.setLogin(newLogin);
-		service.saveAndFlush(userDTO);
-
-	}
-
-	@Test
-	public void saveAndFlush_GivenEntityWithIdShouldUpdate()
-			throws CreateGenericException, ReadGenericException, UpdateGenericException, FieldNullPointerException {
+	public void saveAndFlush_GivenEntityWithIdShouldUpdate() throws CreateUpdateException, ReadException {
 		User userSearch = new User();
 		userSearch.setId(id);
 		userSearch.setLogin(login);
@@ -98,8 +95,7 @@ public class UserServiceTest_SaveAndFlush {
 	}
 
 	@Test
-	public void saveAndFlush_GivenOneEntityShouldSaveDto()
-			throws CreateGenericException, UpdateGenericException, FieldNullPointerException {
+	public void saveAndFlush_GivenEntityWithoutIdShouldSaveDto() throws CreateUpdateException {
 		User userIn = new User();
 		userIn.setLogin(login);
 		userIn.setName(name);
@@ -131,61 +127,6 @@ public class UserServiceTest_SaveAndFlush {
 		assertThat("DTO should has id", dto, hasProperty("id", equalTo(id)));
 		assertThat("DTO should has login", dto, hasProperty("login", equalTo(login)));
 		assertThat("DTO should has name", dto, hasProperty("name", equalTo(name)));
-	}
-
-	@Test
-	public void saveAndFlush_NullNameShouldThrowException()
-			throws CreateGenericException, UpdateGenericException, FieldNullPointerException {
-		thrown.expect(FieldNullPointerException.class);
-		thrown.expectMessage(String.format("%s-%s", UserDTO.class.getName(), UserDTO.FIELD.NAME.name()));
-
-		UserDTO dto = new UserDTO();
-		dto.setLogin(login);
-		service.saveAndFlush(dto);
-	}
-
-	@Test
-	public void saveAndFlush_NullLoginShouldThrowException()
-			throws CreateGenericException, UpdateGenericException, FieldNullPointerException {
-		thrown.expect(FieldNullPointerException.class);
-		thrown.expectMessage(String.format("%s-%s", UserDTO.class.getName(), UserDTO.FIELD.LOGIN.name()));
-
-		UserDTO dto = new UserDTO();
-		service.saveAndFlush(dto);
-	}
-
-	@Test
-	public void saveAndFlush_NullDtoShouldThrowException()
-			throws CreateGenericException, UpdateGenericException, FieldNullPointerException {
-		thrown.expect(DTONullPointerException.class);
-		thrown.expectMessage(UserDTO.class.getName());
-
-		service.saveAndFlush(null);
-	}
-
-	@Test(expected = CreateGenericException.class)
-	public void saveAndFlush_NullRepositoryShouldThrowException()
-			throws CreateGenericException, UpdateGenericException, FieldNullPointerException {
-		service = new UserServiceImpl(null);
-
-		UserDTO dto = new UserDTO();
-		dto.setLogin(login);
-		dto.setName(name);
-
-		service.saveAndFlush(dto);
-	}
-
-	@Test(expected = UpdateGenericException.class)
-	public void saveAndFlush_UpdateWithNullRepositoryShouldThrowException()
-			throws CreateGenericException, UpdateGenericException, FieldNullPointerException {
-		service = new UserServiceImpl(null);
-
-		UserDTO dto = new UserDTO();
-		dto.setId(id);
-		dto.setLogin(login);
-		dto.setName(name);
-
-		service.saveAndFlush(dto);
 	}
 
 }

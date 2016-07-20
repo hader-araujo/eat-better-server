@@ -13,9 +13,8 @@ import org.junit.rules.ExpectedException;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
-import com.eat.better.service.exception.DTONotFoundException;
-import com.eat.better.service.exception.FieldNullPointerException;
-import com.eat.better.service.exception.crudgeneric.ReadGenericException;
+import com.eat.better.service.exception.ReadException;
+import com.eat.better.service.exception.enums.ReadExceptionMessageEnum;
 import com.eat.better.service.user.UserDTO;
 import com.eat.better.service.user.UserService;
 import com.eat.better.service.user.UserServiceImpl;
@@ -31,7 +30,7 @@ public class UserServiceTest_FindOne {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	@Before
 	public void setup() {
 		repository = mock(UserJpaRepository.class);
@@ -39,7 +38,7 @@ public class UserServiceTest_FindOne {
 	}
 
 	@Test
-	public void findOne_GivenOneEntityShouldReturnOneDto() throws ReadGenericException, FieldNullPointerException  {
+	public void findOne_GivenOneEntityShouldReturnOneDto() throws ReadException {
 
 		User entity = new User();
 		entity.setId(id);
@@ -54,25 +53,24 @@ public class UserServiceTest_FindOne {
 		assertThat("Service should return the name", dto.getName(), equalTo(name));
 	}
 
-	@Test(expected = DTONotFoundException.class)
-	public void findOne_DontExistEntityShouldThrowException() throws ReadGenericException, FieldNullPointerException  {
+	@Test
+	public void findOne_DontExistEntityShouldThrowException() throws ReadException {
+		thrown.expect(ReadException.class);
+		thrown.expectMessage(ReadExceptionMessageEnum.NOT_FOUND.name());
 
 		when(repository.findOne(id)).thenReturn(null);
 
 		service.findOne(id);
 	}
-	
+
 	@Test
-	public void findOne_NullIdShouldThrowException() throws ReadGenericException, FieldNullPointerException {
-		thrown.expect(FieldNullPointerException.class);
-		thrown.expectMessage(String.format("%s-%s", UserDTO.class.getName(), UserDTO.FIELD.ID.name()));
+	public void findOne_NullIdShouldThrowException() throws ReadException {
+		thrown.expect(ReadException.class);
+		thrown.expectMessage(ReadExceptionMessageEnum.ID_NULL_EXCEPTION.name());
+		
+		when(repository.findOne(null)).thenThrow(new IllegalArgumentException());
+		
 		service.findOne(null);
 	}
 
-	@Test(expected = ReadGenericException.class)
-	public void findOne_NullRepositotyShouldThrowException() throws ReadGenericException, FieldNullPointerException  {
-
-		when(repository.findOne(id)).thenThrow(new RuntimeException());
-		service.findOne(id);
-	}
 }

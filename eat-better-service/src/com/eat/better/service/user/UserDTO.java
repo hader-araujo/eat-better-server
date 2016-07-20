@@ -1,21 +1,34 @@
 package com.eat.better.service.user;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.eat.better.entity.User;
 import com.eat.better.service.GenenricDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 public class UserDTO implements GenenricDTO {
 
+	@JsonIgnore
 	private static final long serialVersionUID = 3878373869470081599L;
 
-	public static enum FIELD {
-		ID, LOGIN, NAME
-	};
-
+	@NotNull
 	private Long id;
+	@NotNull
+	@Size(min = 3, max = 20)
 	private String login;
+	@NotNull
+	@Size(min = 5, max = 30)
 	private String name;
 
 	public UserDTO() {
+	}
+
+	public UserDTO(User user) {
+		this.setId(user.getId());
+		this.setLogin(user.getLogin());
+		this.setName(user.getName());
 	}
 
 	public Long getId() {
@@ -24,12 +37,6 @@ public class UserDTO implements GenenricDTO {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public UserDTO(User user) {
-		this.setId(user.getId());
-		this.setLogin(user.getLogin());
-		this.setName(user.getName());
 	}
 
 	public String getLogin() {
