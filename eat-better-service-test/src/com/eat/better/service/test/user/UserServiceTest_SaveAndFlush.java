@@ -1,12 +1,13 @@
 package com.eat.better.service.test.user;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,20 +18,21 @@ import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
 import com.eat.better.service.exception.CreateUpdateException;
 import com.eat.better.service.exception.ReadException;
+import com.eat.better.service.exception.enums.CreateUpdateExceptionMessageEnum;
 import com.eat.better.service.user.UserDTO;
 import com.eat.better.service.user.UserService;
 import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_SaveAndFlush {
 
-	UserJpaRepository repository;
-	UserService service;
+	private UserJpaRepository repository;
+	private UserService service;
 
-	final Long id = 1L;
-	final String login = "myLogin";
-	final String name = "myName";
-	final String newLogin = "myNewLogin";
-	final String newName = "my new name";
+	private final Long id = 1L;
+	private final String login = "myLogin";
+	private final String name = "myName";
+	// private final String newLogin = "myNewLogin";
+	private final String newName = "my new name";
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -127,6 +129,16 @@ public class UserServiceTest_SaveAndFlush {
 		assertThat("DTO should has id", dto, hasProperty("id", equalTo(id)));
 		assertThat("DTO should has login", dto, hasProperty("login", equalTo(login)));
 		assertThat("DTO should has name", dto, hasProperty("name", equalTo(name)));
+	}
+	
+	@Test
+	public void findOne_GivenExceptionOnRepositoryShouldThowException() throws CreateUpdateException {
+		thrown.expect(CreateUpdateException.class);
+		thrown.expectMessage(CreateUpdateExceptionMessageEnum.UNEXPECTED_EXCEPTION.name());
+
+		when(repository.saveAndFlush(any(User.class))).thenThrow(new RuntimeException());
+
+		service.saveAndFlush(new UserDTO());
 	}
 
 }

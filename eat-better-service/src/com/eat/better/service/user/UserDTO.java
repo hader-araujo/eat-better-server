@@ -6,7 +6,6 @@ import javax.validation.constraints.Size;
 import com.eat.better.entity.User;
 import com.eat.better.service.GenenricDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 public class UserDTO implements GenenricDTO {
 

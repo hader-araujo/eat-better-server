@@ -1,6 +1,10 @@
 package com.eat.better.service.test.user;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -19,10 +23,10 @@ import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_Delete {
 
-	UserJpaRepository repository;
-	UserService service;
+	private UserJpaRepository repository;
+	private UserService service;
 
-	final Long id = 1L;
+	private final Long id = 1L;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -37,13 +41,17 @@ public class UserServiceTest_Delete {
 	public void delete_GivenOneEntityShouldDeleteIt() throws ReadException, DeleteException {
 		thrown.expect(ReadException.class);
 		thrown.expectMessage(ReadExceptionMessageEnum.NOT_FOUND.name());
-		
+
 		User entity = new User();
 		entity.setId(id);
 		when(repository.findOne(id)).thenReturn(entity).thenReturn(null);
 
 		service.delete(id);
 		service.findOne(id);
+
+		verify(service, times(1)).delete(id);
+		verify(service, times(2)).findOne(id);
+
 	}
 
 	@Test
@@ -61,9 +69,23 @@ public class UserServiceTest_Delete {
 		thrown.expect(DeleteException.class);
 		thrown.expectMessage(DeleteExceptionMessageEnum.ID_NULL_EXCEPTION.name());
 
-		when(repository.findOne(null)).thenThrow(new IllegalArgumentException());
-		
+		when(repository.findOne(any(Long.class))).thenThrow(new IllegalArgumentException());
+
 		service.delete(null);
+	}
+
+	@Test
+	public void delete_GivenExceptionOnRepositoryShouldThowException() throws DeleteException {
+		thrown.expect(DeleteException.class);
+		thrown.expectMessage(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION.name());
+
+		User entity = new User();
+		entity.setId(id);
+		when(repository.findOne(id)).thenReturn(entity);
+
+		doThrow(new RuntimeException()).when(repository).delete(any(Long.class));
+
+		service.delete(id);
 	}
 
 }

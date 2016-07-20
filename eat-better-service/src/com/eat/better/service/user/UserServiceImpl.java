@@ -14,6 +14,7 @@ import com.eat.better.repository.UserJpaRepository;
 import com.eat.better.service.exception.CreateUpdateException;
 import com.eat.better.service.exception.DeleteException;
 import com.eat.better.service.exception.ReadException;
+import com.eat.better.service.exception.enums.CreateUpdateExceptionMessageEnum;
 import com.eat.better.service.exception.enums.DeleteExceptionMessageEnum;
 import com.eat.better.service.exception.enums.ReadExceptionMessageEnum;
 
@@ -36,14 +37,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(readOnly = false)
 	public void saveAndFlush(UserDTO dto) throws CreateUpdateException {
+		try {
+			User user = new User();
+			user.setId(dto.getId());
+			user.setLogin(dto.getLogin());
+			user.setName(dto.getName());
 
-		User user = new User();
-		user.setId(dto.getId());
-		user.setLogin(dto.getLogin());
-		user.setName(dto.getName());
-
-		user = repository.saveAndFlush(user);
-		dto.setId(user.getId());
+			user = repository.saveAndFlush(user);
+			dto.setId(user.getId());
+		} catch (Exception e) {
+			log.error(CreateUpdateExceptionMessageEnum.UNEXPECTED_EXCEPTION);
+			throw new CreateUpdateException(CreateUpdateExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
+		}
 	}
 
 	@Override

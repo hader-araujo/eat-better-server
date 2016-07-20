@@ -1,5 +1,8 @@
 package com.eat.better.service.test.user;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.empty;
@@ -7,27 +10,29 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
 import com.eat.better.service.exception.ReadException;
+import com.eat.better.service.exception.enums.ReadExceptionMessageEnum;
 import com.eat.better.service.user.UserDTO;
 import com.eat.better.service.user.UserService;
 import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_FindAll {
 
-	UserJpaRepository repository;
-	UserService service;
+	private UserJpaRepository repository;
+	private UserService service;
 
 	private final long id1 = 1;
 	private final String login1 = "login_1";
@@ -40,6 +45,9 @@ public class UserServiceTest_FindAll {
 	private final long id3 = 3;
 	private final String login3 = "login_3";
 	private final String name3 = "The name of the third person";
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
 	@Before
 	public void setup() {
@@ -73,6 +81,16 @@ public class UserServiceTest_FindAll {
 		List<UserDTO> userList = service.findAll();
 
 		assertThat("The list should be empty but not null", userList, both(empty()).and(notNullValue()));
+	}
+
+	@Test
+	public void findOne_GivenExceptionOnRepositoryShouldThowException() throws ReadException {
+		thrown.expect(ReadException.class);
+		thrown.expectMessage(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION.name());
+
+		when(repository.findAll()).thenThrow(new RuntimeException());
+
+		service.findAll();
 	}
 
 	private List<User> getListOfUser() {

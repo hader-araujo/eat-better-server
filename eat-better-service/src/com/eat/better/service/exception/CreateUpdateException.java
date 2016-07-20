@@ -9,4 +9,8 @@ public class CreateUpdateException extends Exception {
 	public CreateUpdateException(CreateUpdateExceptionMessageEnum  createUpdateExceptionMessage) {
 		super(createUpdateExceptionMessage.name());
 	}
+	
+	public CreateUpdateException(CreateUpdateExceptionMessageEnum  createUpdateExceptionMessage, Exception e) {
+		super(createUpdateExceptionMessage.name(), e);
+	}
 }

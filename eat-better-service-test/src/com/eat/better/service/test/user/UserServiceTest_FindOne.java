@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,8 +22,8 @@ import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_FindOne {
 
-	UserJpaRepository repository;
-	UserService service;
+	private UserJpaRepository repository;
+	private UserService service;
 
 	final Long id = 1L;
 	final String login = "myLogin";
@@ -67,10 +68,20 @@ public class UserServiceTest_FindOne {
 	public void findOne_NullIdShouldThrowException() throws ReadException {
 		thrown.expect(ReadException.class);
 		thrown.expectMessage(ReadExceptionMessageEnum.ID_NULL_EXCEPTION.name());
-		
-		when(repository.findOne(null)).thenThrow(new IllegalArgumentException());
-		
+
+		when(repository.findOne(any(Long.class))).thenThrow(new IllegalArgumentException());
+
 		service.findOne(null);
+	}
+
+	@Test
+	public void findOne_GivenExceptionOnRepositoryShouldThowException() throws ReadException {
+		thrown.expect(ReadException.class);
+		thrown.expectMessage(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION.name());
+
+		when(repository.findOne(any(Long.class))).thenThrow(new RuntimeException());
+
+		service.findOne(id);
 	}
 
 }
