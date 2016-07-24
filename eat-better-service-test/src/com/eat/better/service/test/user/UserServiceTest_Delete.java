@@ -14,12 +14,12 @@ import org.junit.rules.ExpectedException;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
+import com.eat.better.service.UserService;
+import com.eat.better.service.UserServiceImpl;
 import com.eat.better.service.exception.DeleteException;
 import com.eat.better.service.exception.ReadException;
 import com.eat.better.service.exception.enums.DeleteExceptionMessageEnum;
 import com.eat.better.service.exception.enums.ReadExceptionMessageEnum;
-import com.eat.better.service.user.UserService;
-import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_Delete {
 

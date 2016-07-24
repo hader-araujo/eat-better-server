@@ -4,10 +4,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.both;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Matchers.any;
@@ -23,17 +26,21 @@ import org.junit.rules.ExpectedException;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
+import com.eat.better.service.UserService;
+import com.eat.better.service.UserServiceImpl;
+import com.eat.better.service.dto.user.UserDTOGet;
 import com.eat.better.service.exception.ReadException;
 import com.eat.better.service.exception.enums.ReadExceptionMessageEnum;
-import com.eat.better.service.user.UserDTO;
-import com.eat.better.service.user.UserService;
-import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_FindAll {
 
 	private UserJpaRepository repository;
 	private UserService service;
 
+	private String propertyId = "id";
+	private String propertyLogin = "login";
+	private String propertyName = "name";
+	
 	private final long id1 = 1;
 	private final String login1 = "login_1";
 	private final String name1 = "The name of the first person";
@@ -62,23 +69,25 @@ public class UserServiceTest_FindAll {
 
 		when(repository.findAll()).thenReturn(userList);
 
-		List<UserDTO> userDtoListExpected = getListOfUserDTO();
-		List<UserDTO> userDtoListOut = service.findAll();
+		List<UserDTOGet> userDtoListExpected = getListOfUserDTO();
+		List<UserDTOGet> userDtoListOut = service.findAll();
 
 		assertThat("The list should not be empty", userDtoListOut, not(empty()));
 		assertThat("The list should has 3 elements", userDtoListOut, hasSize(3));
 		assertThat("The return is wrong", userDtoListOut, is(userDtoListExpected));
-		// the same of the before line
-		// assertArrayEquals("The return is wrong",
-		// userDtoListExpected.toArray(), userDtoListOut.toArray());
-
+		for (UserDTOGet dtoExpected : userDtoListExpected){
+			assertThat("The return is wrong", userDtoListOut, hasItem( hasProperty(propertyId, equalTo(dtoExpected.getId()))));
+			assertThat("The return is wrong", userDtoListOut, hasItem(hasProperty(propertyLogin, equalTo(dtoExpected.getLogin()))));
+			assertThat("The return is wrong", userDtoListOut, hasItem(hasProperty(propertyName, equalTo(dtoExpected.getName()))));
+			
+		}
 	}
 
 	@Test
 	public void findAll_NoneDtoShouldReturnEmptyList() throws ReadException {
 		when(repository.findAll()).thenReturn(Collections.emptyList());
 
-		List<UserDTO> userList = service.findAll();
+		List<UserDTOGet> userList = service.findAll();
 
 		assertThat("The list should be empty but not null", userList, both(empty()).and(notNullValue()));
 	}
@@ -117,23 +126,23 @@ public class UserServiceTest_FindAll {
 		return userList;
 	}
 
-	private List<UserDTO> getListOfUserDTO() {
-		UserDTO userDto1 = new UserDTO();
+	private List<UserDTOGet> getListOfUserDTO() {
+		UserDTOGet userDto1 = new UserDTOGet();
 		userDto1.setId(id1);
 		userDto1.setLogin(login1);
 		userDto1.setName(name1);
 
-		UserDTO userDto2 = new UserDTO();
+		UserDTOGet userDto2 = new UserDTOGet();
 		userDto2.setId(id2);
 		userDto2.setLogin(login2);
 		userDto2.setName(name2);
 
-		UserDTO userDto3 = new UserDTO();
+		UserDTOGet userDto3 = new UserDTOGet();
 		userDto3.setId(id3);
 		userDto3.setLogin(login3);
 		userDto3.setName(name3);
 
-		List<UserDTO> userDtoList = new ArrayList<>();
+		List<UserDTOGet> userDtoList = new ArrayList<>();
 		userDtoList.add(userDto1);
 		userDtoList.add(userDto2);
 		userDtoList.add(userDto3);

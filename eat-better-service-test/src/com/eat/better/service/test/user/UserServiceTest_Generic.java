@@ -4,7 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.eat.better.service.user.UserServiceImpl;
+import com.eat.better.service.UserServiceImpl;
 
 public class UserServiceTest_Generic {
 

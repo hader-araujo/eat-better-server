@@ -14,11 +14,11 @@ import org.junit.rules.ExpectedException;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
+import com.eat.better.service.UserService;
+import com.eat.better.service.UserServiceImpl;
+import com.eat.better.service.dto.user.UserDTOGet;
 import com.eat.better.service.exception.ReadException;
 import com.eat.better.service.exception.enums.ReadExceptionMessageEnum;
-import com.eat.better.service.user.UserDTO;
-import com.eat.better.service.user.UserService;
-import com.eat.better.service.user.UserServiceImpl;
 
 public class UserServiceTest_FindOne {
 
@@ -47,9 +47,10 @@ public class UserServiceTest_FindOne {
 		entity.setName(name);
 		when(repository.findOne(id)).thenReturn(entity);
 
-		UserDTO dto = service.findOne(id);
+		UserDTOGet dto = service.findOne(id);
 
 		assertThat("DTO should not be null", dto, notNullValue());
+		assertThat("Service should return the id", dto.getId(), equalTo(id));
 		assertThat("Service should return the login", dto.getLogin(), equalTo(login));
 		assertThat("Service should return the name", dto.getName(), equalTo(name));
 	}

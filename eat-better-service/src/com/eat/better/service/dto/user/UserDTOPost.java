@@ -1,19 +1,20 @@
-package com.eat.better.service.user;
+package com.eat.better.service.dto.user;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.eat.better.entity.User;
-import com.eat.better.service.GenenricDTO;
+import com.eat.better.service.dto.GenenricDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class UserDTO implements GenenricDTO {
+public class UserDTOPost implements GenenricDTO {
 
 	@JsonIgnore
-	private static final long serialVersionUID = 3878373869470081599L;
+	private static final long serialVersionUID = 4824005606745947284L;
 
-	@NotNull
+	@JsonIgnore
 	private Long id;
+
 	@NotNull
 	@Size(min = 3, max = 20)
 	private String login;
@@ -21,13 +22,19 @@ public class UserDTO implements GenenricDTO {
 	@Size(min = 5, max = 30)
 	private String name;
 
-	public UserDTO() {
+	public UserDTOPost() {
 	}
 
-	public UserDTO(User user) {
+	public UserDTOPost(User user) {
 		this.setId(user.getId());
 		this.setLogin(user.getLogin());
 		this.setName(user.getName());
+	}
+
+	public UserDTOPost(UserDTOPut userPut) {
+		this.setId(userPut.getId());
+		this.setLogin(userPut.getLogin());
+		this.setName(userPut.getName());
 	}
 
 	public Long getId() {
@@ -55,11 +62,6 @@ public class UserDTO implements GenenricDTO {
 	}
 
 	@Override
-	public String toString() {
-		return "UserDTO [id=" + id + ", login=" + login + ", name=" + name + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -77,7 +79,7 @@ public class UserDTO implements GenenricDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UserDTO other = (UserDTO) obj;
+		UserDTOPost other = (UserDTOPost) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -94,5 +96,10 @@ public class UserDTO implements GenenricDTO {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "UserDTOPost [id=" + id + ", login=" + login + ", name=" + name + "]";
 	}
 }

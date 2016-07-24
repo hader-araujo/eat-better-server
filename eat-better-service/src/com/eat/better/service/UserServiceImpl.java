@@ -1,4 +1,4 @@
-package com.eat.better.service.user;
+package com.eat.better.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.eat.better.entity.User;
 import com.eat.better.repository.UserJpaRepository;
+import com.eat.better.service.dto.user.UserDTOGet;
+import com.eat.better.service.dto.user.UserDTOPost;
 import com.eat.better.service.exception.CreateUpdateException;
 import com.eat.better.service.exception.DeleteException;
 import com.eat.better.service.exception.ReadException;
@@ -36,15 +38,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void saveAndFlush(UserDTO dto) throws CreateUpdateException {
+	public void saveAndFlush(UserDTOPost dto) throws CreateUpdateException {
 		try {
 			User user = new User();
-			user.setId(dto.getId());
 			user.setLogin(dto.getLogin());
 			user.setName(dto.getName());
 
-			user = repository.saveAndFlush(user);
-			dto.setId(user.getId());
+			repository.saveAndFlush(user);
 		} catch (Exception e) {
 			log.error(CreateUpdateExceptionMessageEnum.UNEXPECTED_EXCEPTION);
 			throw new CreateUpdateException(CreateUpdateExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDTO findOne(Long id) throws ReadException {
+	public UserDTOGet findOne(Long id) throws ReadException {
 		try {
 			User entity = repository.findOne(id);
 
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 			}
 
 			log.debug("findOne::Entity finded: " + entity);
-			UserDTO dto = new UserDTO(entity);
+			UserDTOGet dto = new UserDTOGet(entity);
 			return dto;
 
 		} catch (ReadException e) {
@@ -75,10 +75,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDTO> findAll() throws ReadException {
+	public List<UserDTOGet> findAll() throws ReadException {
 		try {
 			List<User> userList = repository.findAll();
-			return userList.stream().map(f -> new UserDTO(f)).collect(Collectors.toList());
+			return userList.stream().map(f -> new UserDTOGet(f)).collect(Collectors.toList());
 		} catch (Exception e) {
 			log.error(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION);
 			throw new ReadException(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
