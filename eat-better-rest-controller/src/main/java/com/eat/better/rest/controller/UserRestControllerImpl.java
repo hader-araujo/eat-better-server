@@ -3,6 +3,11 @@ package com.eat.better.rest.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -12,8 +17,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.eat.better.entity.User;
 import com.eat.better.service.UserService;
 import com.eat.better.service.dto.user.UserDTOGet;
 import com.eat.better.service.dto.user.UserDTOPost;
@@ -113,6 +120,27 @@ public class UserRestControllerImpl implements UserRestController {
 		} catch (Exception e) {
 			log.error("update::Unexpected error on rest controller", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<PagedResources<Resource<User>>> findBy(@RequestParam String login, @RequestParam String name,
+			Pageable pageable, @SuppressWarnings("rawtypes") PagedResourcesAssembler assembler) {
+		try {
+			Page<User> dtoPage = service.findBy(login, name, pageable);
+
+			return new ResponseEntity<>(assembler.toResource(dtoPage), HttpStatus.OK);
+
+		} catch (ReadException e) {
+			log.error("findBy:: Error getting the user page", e);
+			return new ResponseEntity<PagedResources<Resource<User>>>(
+					(PagedResources<Resource<User>>) PagedResources.NO_PAGE, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			log.error("findBy::Unexpected error on rest controller", e);
+			return new ResponseEntity<PagedResources<Resource<User>>>(
+					(PagedResources<Resource<User>>) PagedResources.NO_PAGE, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

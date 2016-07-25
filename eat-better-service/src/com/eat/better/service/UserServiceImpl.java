@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
 			repository.saveAndFlush(user);
 		} catch (Exception e) {
-			log.error(CreateUpdateExceptionMessageEnum.UNEXPECTED_EXCEPTION);
+			log.error(CreateUpdateExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 			throw new CreateUpdateException(CreateUpdateExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 		}
 	}
@@ -69,7 +71,7 @@ public class UserServiceImpl implements UserService {
 		} catch (IllegalArgumentException e) {
 			throw new ReadException(ReadExceptionMessageEnum.ID_NULL_EXCEPTION);
 		} catch (Exception e) {
-			log.error(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION);
+			log.error(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 			throw new ReadException(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 		}
 	}
@@ -80,7 +82,7 @@ public class UserServiceImpl implements UserService {
 			List<User> userList = repository.findAll();
 			return userList.stream().map(f -> new UserDTOGet(f)).collect(Collectors.toList());
 		} catch (Exception e) {
-			log.error(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION);
+			log.error(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 			throw new ReadException(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 		}
 	}
@@ -102,8 +104,18 @@ public class UserServiceImpl implements UserService {
 		} catch (IllegalArgumentException e) {
 			throw new DeleteException(DeleteExceptionMessageEnum.ID_NULL_EXCEPTION);
 		} catch (Exception e) {
-			log.error(DeleteExceptionMessageEnum.UNEXPECTED_EXCEPTION);
+			log.error(DeleteExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 			throw new DeleteException(DeleteExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
+		}
+	}
+
+	@Override
+	public Page<User> findBy(String login, String name, Pageable pageable) throws ReadException {
+		try {
+			return repository.findByLoginIgnoreCaseStartingWithAndNameIgnoreCaseStartingWith(login, name, pageable);
+		} catch (Exception e) {
+			log.error(DeleteExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
+			throw new ReadException(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 		}
 	}
 }

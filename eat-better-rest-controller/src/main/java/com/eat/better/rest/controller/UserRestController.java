@@ -1,8 +1,13 @@
 package com.eat.better.rest.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
+import com.eat.better.entity.User;
 import com.eat.better.service.dto.user.UserDTOPost;
 import com.eat.better.service.dto.user.UserDTOPut;
 
@@ -16,5 +21,7 @@ public interface UserRestController {
 
 	@SuppressWarnings("rawtypes")
 	ResponseEntity update(UserDTOPut user, BindingResult result);
+
+	ResponseEntity<PagedResources<Resource<User>>> findBy(String login, String name, Pageable pageable, @SuppressWarnings("rawtypes") PagedResourcesAssembler assembler);
 
 }

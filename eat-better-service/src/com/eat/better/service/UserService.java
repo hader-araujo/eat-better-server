@@ -2,6 +2,10 @@ package com.eat.better.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import com.eat.better.entity.User;
 import com.eat.better.service.dto.user.UserDTOGet;
 import com.eat.better.service.dto.user.UserDTOPost;
 import com.eat.better.service.exception.CreateUpdateException;
@@ -17,5 +21,7 @@ public interface UserService {
 	List<UserDTOGet> findAll() throws ReadException;
 
 	void delete(Long id) throws DeleteException;
+
+	Page<User> findBy(String login, String name, Pageable pageable) throws ReadException;
 
 }
