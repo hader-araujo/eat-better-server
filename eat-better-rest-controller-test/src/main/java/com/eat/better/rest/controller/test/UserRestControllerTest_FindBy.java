@@ -24,13 +24,13 @@ import com.eat.better.service.exception.ReadException;
 
 public class UserRestControllerTest_FindBy {
 
-	// private Pageable pageable;
+	private Pageable pageable;
 	private UserService service;
 	private UserRestController controller;
 
 	@Before
 	public void setup() {
-		// pageable = mock(Pageable.class);
+		pageable = mock(Pageable.class);
 		service = mock(UserService.class);
 		controller = new UserRestControllerImpl(service);
 	}
@@ -46,7 +46,7 @@ public class UserRestControllerTest_FindBy {
 	public void findBy_GivenAnyExceptionShoudReturnInternalServerErrorStatus() throws ReadException {
 		doThrow(new RuntimeException()).when(service).findBy(any(String.class), any(String.class), any(Pageable.class));
 
-		ResponseEntity<PagedResources<Resource<User>>> responseEntity = controller.findBy(null, null, null, null);
+		ResponseEntity<PagedResources<Resource<User>>> responseEntity = controller.findBy(null, null, pageable, null);
 
 		HttpStatus httpStatus = responseEntity.getStatusCode();
 		assertThat("Wrong HTTP status", httpStatus, equalTo(HttpStatus.INTERNAL_SERVER_ERROR));
