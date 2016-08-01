@@ -22,6 +22,6 @@ public interface UserService {
 
 	void delete(Long id) throws DeleteException;
 
-	Page<User> findBy(String login, String name, Pageable pageable) throws ReadException;
+	Page<User> findBy(String searchValue, Pageable pageable) throws ReadException;
 
 }

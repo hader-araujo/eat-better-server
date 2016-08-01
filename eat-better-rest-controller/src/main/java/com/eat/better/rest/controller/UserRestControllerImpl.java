@@ -126,13 +126,14 @@ public class UserRestControllerImpl implements UserRestController {
 	@Override
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<PagedResources<Resource<User>>> findBy(@RequestParam String login, @RequestParam String name,
-			Pageable pageable, @SuppressWarnings("rawtypes") PagedResourcesAssembler assembler) {
+	public ResponseEntity<PagedResources<Resource<User>>> findBy(@RequestParam String searchValue, Pageable pageable,
+			@SuppressWarnings("rawtypes") PagedResourcesAssembler assembler) {
 		try {
-			log.debug(String.format("findBy::login:%s, name:%s, pageNumber:%d, offset:%d, pagesize:%d, sort:%s", login,
-					name, pageable.getPageNumber(), pageable.getOffset(), pageable.getPageSize(), pageable.getSort()));
+			log.debug(String.format("findBy::searchValue:%s, pageNumber:%d, offset:%d, pagesize:%d, sort:%s",
+					searchValue, pageable.getPageNumber(), pageable.getOffset(), pageable.getPageSize(),
+					pageable.getSort()));
 
-			Page<User> dtoPage = service.findBy(login, name, pageable);
+			Page<User> dtoPage = service.findBy(searchValue, pageable);
 
 			return new ResponseEntity<>(assembler.toResource(dtoPage), HttpStatus.OK);
 

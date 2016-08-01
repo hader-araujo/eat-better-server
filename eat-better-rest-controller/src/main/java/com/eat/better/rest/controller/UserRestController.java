@@ -22,6 +22,6 @@ public interface UserRestController {
 	@SuppressWarnings("rawtypes")
 	ResponseEntity update(UserDTOPut user, BindingResult result);
 
-	ResponseEntity<PagedResources<Resource<User>>> findBy(String login, String name, Pageable pageable, @SuppressWarnings("rawtypes") PagedResourcesAssembler assembler);
+	ResponseEntity<PagedResources<Resource<User>>> findBy(String searchValue, Pageable pageable, @SuppressWarnings("rawtypes") PagedResourcesAssembler assembler);
 
 }

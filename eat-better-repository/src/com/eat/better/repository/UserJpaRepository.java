@@ -11,5 +11,5 @@ import com.eat.better.entity.User;
 public interface UserJpaRepository extends JpaRepository<User, Long> {
 
 	User findByIdAndLogin(Long id, String login);
-	Page<User> findByLoginIgnoreCaseStartingWithAndNameIgnoreCaseStartingWith(String login,  String name, Pageable pageable);
+	Page<User> findByLoginIgnoreCaseContainsOrNameIgnoreCaseContains(String login,  String name, Pageable pageable);
 }

@@ -110,9 +110,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<User> findBy(String login, String name, Pageable pageable) throws ReadException {
+	public Page<User> findBy(String searchValue, Pageable pageable) throws ReadException {
 		try {
-			return repository.findByLoginIgnoreCaseStartingWithAndNameIgnoreCaseStartingWith(login, name, pageable);
+			return repository.findByLoginIgnoreCaseContainsOrNameIgnoreCaseContains(searchValue, searchValue, pageable);
 		} catch (Exception e) {
 			log.error(DeleteExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);
 			throw new ReadException(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION, e);

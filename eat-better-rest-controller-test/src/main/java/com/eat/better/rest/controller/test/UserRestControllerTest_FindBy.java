@@ -44,12 +44,12 @@ public class UserRestControllerTest_FindBy {
 
 	@Test
 	public void findBy_GivenAnyExceptionShoudReturnInternalServerErrorStatus() throws ReadException {
-		doThrow(new RuntimeException()).when(service).findBy(any(String.class), any(String.class), any(Pageable.class));
+		doThrow(new RuntimeException()).when(service).findBy(any(String.class), any(Pageable.class));
 
-		ResponseEntity<PagedResources<Resource<User>>> responseEntity = controller.findBy(null, null, pageable, null);
+		ResponseEntity<PagedResources<Resource<User>>> responseEntity = controller.findBy(null, pageable, null);
 
 		HttpStatus httpStatus = responseEntity.getStatusCode();
 		assertThat("Wrong HTTP status", httpStatus, equalTo(HttpStatus.INTERNAL_SERVER_ERROR));
-		verify(service, times(1)).findBy(any(String.class), any(String.class), any(Pageable.class));
+		verify(service, times(1)).findBy(any(String.class), any(Pageable.class));
 	}
 }

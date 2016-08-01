@@ -26,49 +26,46 @@ public class UserServiceTest_FindBy {
 	private UserJpaRepository repository;
 	private UserService service;
 	private Pageable pageable;
-	
-	private final String login = "";
-	private final String name = "";
-	
+
+	private final String searchValue = "";
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	@Before
-	public void setup(){
+	public void setup() {
 		pageable = mock(Pageable.class);
 		repository = mock(UserJpaRepository.class);
 		service = new UserServiceImpl(repository);
 	}
-	
+
 	@Test
-	public void findBy_GivenSearchShouldReturnIt() throws ReadException{
+	public void findBy_GivenSearchShouldReturnIt() throws ReadException {
 
 		@SuppressWarnings("unchecked")
 		Page<User> page = mock(Page.class);
-		
-		when(repository.findByLoginIgnoreCaseStartingWithAndNameIgnoreCaseStartingWith(login,name, pageable)).
-		thenReturn(page);
-		
-		Page<User> dtoPage = service.findBy(login, name, pageable);
-		
+
+		when(repository.findByLoginIgnoreCaseContainsOrNameIgnoreCaseContains(searchValue, searchValue, pageable))
+				.thenReturn(page);
+
+		Page<User> dtoPage = service.findBy(searchValue, pageable);
+
 		assertThat("DTO should not be null", dtoPage, notNullValue());
-		//TODO more asserts
-		
-		
-		
+		// TODO more asserts
+
 	}
-	
+
 	@Test
-	public void findBy_GivenExceptionOnRepositoryShouldThrownException() throws ReadException{
-		
+	public void findBy_GivenExceptionOnRepositoryShouldThrownException() throws ReadException {
+
 		thrown.expect(ReadException.class);
 		thrown.expectMessage(ReadExceptionMessageEnum.UNEXPECTED_EXCEPTION.name());
-		
-		when(repository.findByLoginIgnoreCaseStartingWithAndNameIgnoreCaseStartingWith(any(String.class),any(String.class), any(Pageable.class))).
-				thenThrow(new RuntimeException());
-		
-		service.findBy(login, name, pageable);
-		
+
+		when(repository.findByLoginIgnoreCaseContainsOrNameIgnoreCaseContains(any(String.class), any(String.class),
+				any(Pageable.class))).thenThrow(new RuntimeException());
+
+		service.findBy(searchValue, pageable);
+
 	}
-	
+
 }
