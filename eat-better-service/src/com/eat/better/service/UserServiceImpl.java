@@ -88,6 +88,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void delete(Long id) throws DeleteException {
 		try {
 			findOne(id);

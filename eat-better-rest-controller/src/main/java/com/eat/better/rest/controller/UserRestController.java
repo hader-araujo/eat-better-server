@@ -21,6 +21,9 @@ public interface UserRestController {
 
 	@SuppressWarnings("rawtypes")
 	ResponseEntity update(UserDTOPut user, BindingResult result);
+	
+	@SuppressWarnings("rawtypes")
+	ResponseEntity delete(Long id);
 
 	ResponseEntity<PagedResources<Resource<User>>> findBy(String searchValue, Pageable pageable, @SuppressWarnings("rawtypes") PagedResourcesAssembler assembler);
 

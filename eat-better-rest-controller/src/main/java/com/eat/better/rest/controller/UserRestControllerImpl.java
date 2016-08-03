@@ -26,6 +26,7 @@ import com.eat.better.service.dto.user.UserDTOGet;
 import com.eat.better.service.dto.user.UserDTOPost;
 import com.eat.better.service.dto.user.UserDTOPut;
 import com.eat.better.service.exception.CreateUpdateException;
+import com.eat.better.service.exception.DeleteException;
 import com.eat.better.service.exception.ReadException;
 import com.eat.better.service.exception.enums.ReadExceptionMessageEnum;
 
@@ -145,6 +146,26 @@ public class UserRestControllerImpl implements UserRestController {
 			log.error("findBy::Unexpected error on rest controller", e);
 			return new ResponseEntity<PagedResources<Resource<User>>>(
 					(PagedResources<Resource<User>>) PagedResources.NO_PAGE, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity delete(@PathVariable("id") Long id) {
+
+		//TODO tests cases need to be written 
+		
+		try {
+			service.delete(id);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+		} catch (DeleteException e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+		} catch (Exception e) {
+			log.error("get::Unexpected error on rest controller", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
