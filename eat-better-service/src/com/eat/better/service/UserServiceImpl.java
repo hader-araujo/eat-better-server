@@ -43,8 +43,8 @@ public class UserServiceImpl implements UserService {
 	public void saveAndFlush(UserDTOPost dto) throws CreateUpdateException {
 		try {
 			User user = new User();
-			user.setLogin(dto.getLogin());
-			user.setName(dto.getName());
+			user.setLogin(dto.getLogin().toUpperCase());
+			user.setName(dto.getName().toUpperCase());
 
 			repository.saveAndFlush(user);
 		} catch (Exception e) {

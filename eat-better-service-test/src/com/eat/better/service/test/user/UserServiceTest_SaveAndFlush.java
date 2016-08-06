@@ -100,8 +100,8 @@ public class UserServiceTest_SaveAndFlush {
 	@Test
 	public void saveAndFlush_GivenEntityWithoutIdShouldSaveDto() throws CreateUpdateException {
 		User user = new User();
-		user.setLogin(login);
-		user.setName(name);
+		user.setLogin(login.toUpperCase());
+		user.setName(name.toUpperCase());
 
 		when(repository.saveAndFlush(user)).thenReturn(user);
 
