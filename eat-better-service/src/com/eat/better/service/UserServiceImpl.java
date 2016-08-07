@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
 	public void saveAndFlush(UserDTOPost dto) throws CreateUpdateException {
 		try {
 			User user = new User();
+			user.setId(dto.getId());
 			user.setLogin(dto.getLogin().toUpperCase());
 			user.setName(dto.getName().toUpperCase());
 

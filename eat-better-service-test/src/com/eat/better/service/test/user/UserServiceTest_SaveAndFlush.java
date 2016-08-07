@@ -31,8 +31,8 @@ public class UserServiceTest_SaveAndFlush {
 	private final Long id = 1L;
 	private final String login = "myLogin";
 	private final String name = "myName";
-	private final String newLogin = "myNewLogin";
-	private final String newName = "my new name";
+	private final String newLogin = "MYNEWLOGIN";
+	private final String newName = "MY NEW NAME";
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -95,6 +95,8 @@ public class UserServiceTest_SaveAndFlush {
 		assertThat("DTO should has id", userDTO, hasProperty("id", equalTo(id)));
 		assertThat("DTO should has login", userDTO, hasProperty("login", equalTo(newLogin)));
 		assertThat("DTO should has name", userDTO, hasProperty("name", equalTo(newName)));
+		
+		verify(repository, times(1)).saveAndFlush(userUpdated);
 	}
 
 	@Test
